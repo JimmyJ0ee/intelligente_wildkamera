@@ -142,5 +142,42 @@ def download_img_from_iNaturalist():
     return response
 
 
+def download_img_from_Flickr():
+    url = "https://www.flickr.com/search/?text=wild+boar"
+    home_url = "https://www.flickr.com/"
+    # HTTP-Anfrage an die Webseite
+    response = requests.get(url, verify=False)
+    soup = BeautifulSoup(response.text, "html.parser")
+    with open("page.html", "w", encoding="utf-8") as file:
+        file.write(response.text)
+    # Verzeichnis zum Speichern der Bilder
+    os.makedirs("images", exist_ok=True)
+
+    # Alle Bild-Tags finden
+    img_tags = soup.find_all("img", recursive=True)
+    print(img_tags)
+    # Bilder herunterladen und speichern
+
+    for img in img_tags:
+        img_url = img["src"]
+        if "logo" in img_url:
+            continue
+        if not img_url.startswith("http"):
+            img_url = "https:" + img_url
+            print(img_url)
+        # Vollständige URL erstellen, falls nötig
+        print(img_url)
+        response = requests.get(img_url, verify=False)
+
+        if test_img(response.content, img_url):
+            img_data = requests.get(img_url, verify=False).content
+            img_name = os.path.join("images", os.path.basename(img_url))
+            with open(img_name, "wb") as handler:
+                handler.write(img_data)
+    print("Bilder wurden erfolgreich heruntergeladen und gespeichert.")
+
+    return response
+
+
 # download_img_from_wildlife_insights()
-download_img_from_iNaturalist()
+download_img_from_Flickr()
