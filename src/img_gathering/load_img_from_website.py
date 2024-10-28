@@ -14,7 +14,7 @@ def test_img(response_content, img_url):
 
     try:
         img = Image.open(io.BytesIO(response_content))
-        img.show()  # Zeigt das Bild an
+        # img.show()  # Zeigt das Bild an
         img.save(
             os.path.join("images", os.path.basename(img_url))
         )  # Speichert das Bild
@@ -143,7 +143,10 @@ def download_img_from_iNaturalist():
 
 
 def download_img_from_Flickr():
-    url = "https://www.flickr.com/search/?text=wild+boar"
+    """Only 15 images are currently downloaded. Images are loaded while scrolling the website."""
+
+    url = "https://www.flickr.com/search?text=wildschwein"
+    # https://www.flickr.com/search/?text=deer+european
     home_url = "https://www.flickr.com/"
     # HTTP-Anfrage an die Webseite
     response = requests.get(url, verify=False)
@@ -164,9 +167,9 @@ def download_img_from_Flickr():
             continue
         if not img_url.startswith("http"):
             img_url = "https:" + img_url
-            print(img_url)
+            # print(img_url)
         # Vollständige URL erstellen, falls nötig
-        print(img_url)
+        # print(img_url)
         response = requests.get(img_url, verify=False)
 
         if test_img(response.content, img_url):
