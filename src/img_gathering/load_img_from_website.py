@@ -60,6 +60,10 @@ def download_img_from_emammal():
 
 
 def download_img_from_wildlife_insights():
+    """
+    Download is not working.
+    Reason: authentification is necessary to load the images in the html.
+    """
     # Erstelle eine Session
     # session = requests.Session()
 
@@ -84,11 +88,13 @@ def download_img_from_wildlife_insights():
     img_tags = soup.find_all("img", recursive=True)
     print(img_tags)
     # Bilder herunterladen und speichern
-    with open("page.html", "w", encoding="utf-8") as file:
-        file.write(response.text)
+    # with open("page.html", "w", encoding="utf-8") as file:
+    #   file.write(response.text)
 
     for img in img_tags:
         img_url = img["src"]
+        if "logo" in img_url:
+            continue
         # Vollständige URL erstellen, falls nötig
         if not img_url.startswith("http") or img_url.startswith("https"):
             img_url = url + img_url
@@ -182,5 +188,5 @@ def download_img_from_Flickr():
     return response
 
 
-# download_img_from_wildlife_insights()
-download_img_from_Flickr()
+download_img_from_wildlife_insights()
+# download_img_from_Flickr()
