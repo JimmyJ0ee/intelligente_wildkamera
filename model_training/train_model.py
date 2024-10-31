@@ -11,7 +11,16 @@ model.info()
 
 
 # Train the model on the COCO8 example dataset for 100 epochs
-results = model.train(data="data.yaml", epochs=10, imgsz=640)
+results = model.train(
+    data="data.yaml",
+    epochs=10,
+    imgsz=640,
+    batch=20,
+    optimizer="ADAM",
+    cache=True,
+    momentum=0.9,
+    lr0=0.001,
+)
 
 # model.save("path_to_your_model.h5")
 
