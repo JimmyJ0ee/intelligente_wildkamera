@@ -3,6 +3,9 @@
 .data
 .contrib
 archive
+*.pt
+*.pt
+*.gitignore
 
 # for now:
 organization
