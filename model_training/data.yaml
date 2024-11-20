@@ -6,4 +6,4 @@ val: ./../.data/data_deer_yolov8/validation/
 # Classes
 names:
   0: deer
-  # 1: uncategorized
+  1: wild_boar

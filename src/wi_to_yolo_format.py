@@ -1,7 +1,9 @@
 import csv
 import json
 import os
-import pandas as pd
+import random
+import shutil
+import re
 
 
 def convert_to_json(data_str):
@@ -23,7 +25,7 @@ def convert_to_yolo_format(csv_file, output_folder):
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    image_names = set(os.listdir("./../.data/wi_wild_boar/images_w_label"))
+    image_names = set(os.listdir(".data/wi_wild_boar/images_w_label"))
 
     with open(csv_file, mode="r") as file:
         csv_reader = csv.DictReader(file)
@@ -57,7 +59,7 @@ def convert_to_yolo_format(csv_file, output_folder):
 def convert_box_to_yolo(detection_box):
     # YOLO format: [class, x_center, y_center, width, height]
     # Assuming class is 0 for all boxes
-    class_id = 0
+    class_id = 1
     x_center = (detection_box[1] + detection_box[3]) / 2
     y_center = (detection_box[0] + detection_box[2]) / 2
     width = detection_box[3] - detection_box[1]
@@ -65,12 +67,91 @@ def convert_box_to_yolo(detection_box):
     return [class_id, x_center, y_center, width, height]
 
 
-# Beispielverwendung
-csv_file = "./../.data/wi_wild_boar/labels/images_2004096.csv"
-output_folder = "./../.data/wi_wild_boar/labels"
+def move_files(src_dir, dest_dir, file_extension, percentage):
+    # Liste der Dateien mit der angegebenen Erweiterung erhalten
+    files = [f for f in os.listdir(src_dir) if f.endswith(file_extension)]
 
-convert_to_yolo_format(csv_file, output_folder)
+    # Anzahl der zu verschiebenden Dateien berechnen
+    num_files_to_move = int(len(files) * percentage)
 
-print(
-    f"Die Bounding Boxen wurden erfolgreich in das YOLO-Format konvertiert und im Ordner {output_folder} gespeichert."
-)
+    # Dateien zufällig auswählen
+    files_to_move = random.sample(files, num_files_to_move)
+
+    # Dateien verschieben und ihre Namen speichern
+    moved_files = []
+    for file in files_to_move:
+        shutil.move(os.path.join(src_dir, file), os.path.join(dest_dir, file))
+        moved_files.append(file)
+
+    return moved_files
+
+
+def move_text_files(src_dir, dest_dir, file_names):
+    for file_name in file_names:
+        text_file = os.path.splitext(file_name)[0] + ".txt"
+        if os.path.exists(os.path.join(src_dir, text_file)):
+            shutil.move(
+                os.path.join(src_dir, text_file), os.path.join(dest_dir, text_file)
+            )
+
+
+def shuffle_files(directory):
+    files = os.listdir(directory)
+    random.shuffle(files)
+    for i, file in enumerate(files):
+        src = os.path.join(directory, file)
+        dst = os.path.join(directory, f"{i}_{file}")
+        os.rename(src, dst)
+
+
+def rename_files_in_directory(directory):
+    # Liste der Dateien im Verzeichnis erhalten
+    files = os.listdir(directory)
+
+    for file in files:
+        # Neuen Dateinamen erstellen, indem alles vor dem Unterstrich entfernt wird
+        new_name = re.sub(r"^[^_]*_", "", file)
+
+        # Alte und neue Dateipfade erstellen
+        old_file_path = os.path.join(directory, file)
+        new_file_path = os.path.join(directory, new_name)
+
+        # Datei umbenennen
+        os.rename(old_file_path, new_file_path)
+
+
+"""Filename nach verschieben korrigieren."""
+# rename_files_in_directory(".data/data_deer_wild_boar_yolo/validation/images")
+
+"""Files verschieben und neu anordnen."""
+# # Verzeichnisse für Bilder
+# src_image_dir = ".data/wi_wild_boar/images_w_label"
+# dest_image_dir = ".data/data_deer_wild_boar_yolo/validation/images"
+
+# # Verzeichnisse für Textdateien
+# src_text_dir = ".data/wi_wild_boar/labels"
+# dest_text_dir = ".data/data_deer_wild_boar_yolo/validation/labels"
+
+# # 5% der Bilder verschieben und ihre Namen erhalten
+# moved_images = move_files(src_image_dir, dest_image_dir, ".JPG", 0.05)
+
+# # Entsprechende Textdateien verschieben
+# move_text_files(src_text_dir, dest_text_dir, moved_images)
+
+# # Dateien in beiden Zielverzeichnissen zufällig neu anordnen
+# shuffle_files(dest_image_dir)
+# shuffle_files(dest_text_dir)
+
+# print("Dateien wurden erfolgreich verschoben und neu angeordnet.")
+
+
+"""Label umformatieren."""
+# # Beispielverwendung
+# csv_file = ".data/wi_wild_boar/labels/images_2004096.csv"
+# output_folder = ".data/wi_wild_boar/labels"
+
+# convert_to_yolo_format(csv_file, output_folder)
+
+# print(
+#     f"Die Bounding Boxen wurden erfolgreich in das YOLO-Format konvertiert und im Ordner {output_folder} gespeichert."
+# )

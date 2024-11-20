@@ -23,7 +23,7 @@ def count_images_and_csv_entries(image_folder, csv_file):
 
 
 def split_images(image_folder, csv_file):
-    destination_folder = "./../.data/wi_wild_boar/images_w_label"
+    destination_folder = ".data/wi_wild_boar/images_w_label_new"
     zaehler = 0
     # CSV-Datei lesen und Einträge zählen
     df = pd.read_csv(csv_file)
@@ -41,8 +41,8 @@ def split_images(image_folder, csv_file):
 
 
 # Beispielverwendung
-image_folder = "./../.data/wi_wild_boar/images"
-csv_file = "./../.data/wi_wild_boar/labels/images_2004096.csv"
+image_folder = ".data/wi_wild_boar/images_all"
+csv_file = ".data/wi_wild_boar/labels/images_2004096.csv"
 
 images_in_csv = count_images_and_csv_entries(image_folder, csv_file)
 split_images(image_folder, csv_file)
