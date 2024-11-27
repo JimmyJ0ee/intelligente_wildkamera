@@ -1,0 +1,10 @@
+path:  C:/Users/Z0127829/OneDrive - ZF Friedrichshafen AG/Desktop/Arbeit/Studienarbeit/intelligente_wildkamera/ # root dir
+train: ./../.data/data_deer_yolov8/train/
+test: ./../.data/data_deer_yolov8/test/
+# val: .data/evaluation/img/weitere Evaluation/wild_boar
+val: .data/evaluation/img/weitere Evaluation/wild_boar_alternative # Valdierungsdaten des Datensatzes ohne Rehe
+
+# Classes
+names:
+  0: deer
+  1: wild_boar
