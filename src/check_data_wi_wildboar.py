@@ -60,7 +60,7 @@ def split_images(
     df_animal = df.loc[df["common_name"].isin(animal)]
     print(df.shape)
     # Doppelte Vorkommen sind evtl. 1x falsch klassifiziert. Löschen sichert Qualität des Datensatzes.
-    wo_duplicates = df_animal["location"].drop_duplicates()
+    wo_duplicates = df_animal["location"].drop_duplicates(keep=False)
     col_location = wo_duplicates.tolist()
     print(len(col_location))
 
@@ -91,11 +91,11 @@ def split_images(
 
 
 # Pfade
-image_folder = ".data/not_used/wi_badger/images"
+image_folder = ".data/not_used/wi_wild_boar/images"
 csv_file = ".contrib/images_2004096.csv"
-destination_folder_w_label = ".data/not_used/wi_badger/images_w_label"
-destination_folder_wo_label = ".data/not_used/wi_badger/images_wo_label"
-animal = ("Eurasian Badger",)  # Name des Tiers in der Spalte "common_name"
+destination_folder_w_label = ".data/not_used/wi_wild_boar/images_w_label"
+destination_folder_wo_label = ".data/not_used/wi_wild_boar/images_wo_label"
+animal = ("Wild Boar",)  # Name des Tiers in der Spalte "common_name"
 
 
 # images_in_csv = count_images_and_csv_entries(image_folder, csv_file)

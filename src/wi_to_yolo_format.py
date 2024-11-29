@@ -147,11 +147,11 @@ def rename_files_in_directory(directory):
 
 """Label umformatieren."""
 # # Pfade
-# image_folder = ".data/not_used/wi_badger/images_w_label"
+# image_folder = ".data/not_used/wi_wild_boar/images_w_label"
 # csv_file = ".contrib/images_2004096.csv"
-# output_folder = ".data/not_used/wi_badger/labels"
-# animal = ("Eurasian Badger",)  # Name des Tiers in der Spalte "common_name"
-# class_id = 3  # id in data.yml für Klasse
+# output_folder = ".data/not_used/wi_wild_boar/labels"
+# animal = ("Wild Boar",)  # Name des Tiers in der Spalte "common_name"
+# class_id = 1  # id in data.yml für Klasse
 # convert_to_yolo_format(csv_file, output_folder, image_folder, animal, class_id)
 
 # print(
@@ -159,43 +159,46 @@ def rename_files_in_directory(directory):
 # )
 
 """Files verschieben und neu anordnen."""
-# # Verzeichnisse für Bilder
-Ordnername = "train"
-# src_image_dir = ".data/not_used/wi_badger/images_w_label"
-# src_text_dir = ".data/not_used/wi_badger/labels"
+# Verzeichnisse für Bilder
+# Ordnernamen = ["validation", "test", "train"]
+# for Ordnername in Ordnernamen:
+#     src_image_dir = ".data/not_used/wi_wild_boar/images_w_label"
+#     src_text_dir = ".data/not_used/wi_wild_boar/labels"
 
-# if Ordnername == "validation":
-#     dest_image_dir = ".data/data_4animals/validation/images"
-#     dest_text_dir = ".data/data_4animals/validation/labels"
-#     size_of_data_part = 0.05
-# elif Ordnername == "test":
-#     dest_image_dir = ".data/data_4animals/test/images"
-#     dest_text_dir = ".data/data_4animals/test/labels"
-#     size_of_data_part = 0.15
-# elif Ordnername == "train":
-#     dest_image_dir = ".data/data_4animals/train/images"
-#     dest_text_dir = ".data/data_4animals/train/labels"
-#     size_of_data_part = 1
-# else:
-#     print("Falsche Eingabe des ORDNERNAMENS.")
+#     if Ordnername == "validation":
+#         dest_image_dir = ".data/data_deer_wild_boar_yolo/validation/images"
+#         dest_text_dir = ".data/data_deer_wild_boar_yolo/validation/labels"
+#         size_of_data_part = 0.05
+#     elif Ordnername == "test":
+#         dest_image_dir = ".data/data_deer_wild_boar_yolo/test/images"
+#         dest_text_dir = ".data/data_deer_wild_boar_yolo/test/labels"
+#         size_of_data_part = 0.15
+#     elif Ordnername == "train":
+#         dest_image_dir = ".data/data_deer_wild_boar_yolo/train/images"
+#         dest_text_dir = ".data/data_deer_wild_boar_yolo/train/labels"
+#         size_of_data_part = 1
+#     else:
+#         print("Falsche Eingabe des ORDNERNAMENS.")
+
+#     # Bilder in train, test und validation unterteilen
+#     moved_images = move_files(src_image_dir, dest_image_dir, ".JPG", size_of_data_part)
+
+#     # Entsprechende Textdateien verschieben
+#     move_text_files(src_text_dir, dest_text_dir, moved_images)
+
+#     # Dateien in beiden Zielverzeichnissen zufällig neu anordnen
+#     shuffle_files(dest_image_dir)
+#     shuffle_files(dest_text_dir)
+
+#     if Ordnername == "train":
+#         rename_files_in_directory(".data/data_deer_wild_boar_yolo/validation/images")
+# rename_files_in_directory(".data/data_deer_wild_boar_yolo/validation/labels")
+# rename_files_in_directory(".data/data_deer_wild_boar_yolo/test/images")
+# rename_files_in_directory(".data/data_deer_wild_boar_yolo/test/labels")
+# rename_files_in_directory(".data/data_deer_wild_boar_yolo/train/images")
+# rename_files_in_directory(".data/data_deer_wild_boar_yolo/train/labels")
 
 
-# # Bilder in train, test und validation unterteilen
-# moved_images = move_files(src_image_dir, dest_image_dir, ".JPG", size_of_data_part)
-
-# # Entsprechende Textdateien verschieben
-# move_text_files(src_text_dir, dest_text_dir, moved_images)
-
-# # Dateien in beiden Zielverzeichnissen zufällig neu anordnen
-# shuffle_files(dest_image_dir)
-# shuffle_files(dest_text_dir)
-
-# if Ordnername == "train":
-#     rename_files_in_directory(".data/data_4animals/validation/images")
-#     rename_files_in_directory(".data/data_4animals/validation/label")
-#     rename_files_in_directory(".data/data_4animals/validation/images")
-#     rename_files_in_directory(".data/data_4animals/validation/label")
-#     rename_files_in_directory(".data/data_4animals/validation/images")
-#     rename_files_in_directory(".data/data_4animals/validation/label")
+#     print(f"{Ordnername} wurde erfolgreich verschoben und neu angeordnet.")
 
 # print("Dateien wurden erfolgreich verschoben und neu angeordnet.")
