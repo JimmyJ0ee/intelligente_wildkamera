@@ -49,8 +49,9 @@ def find_duplicates_with_common_part(directory):
     return duplicates
 
 
-path = ".data/data_deer_wild_boar_yolo/data/train/labels"
-duplicates = find_duplicates_with_common_part(path)
-print("Duplikate")
-for element in duplicates:
-    print(element)
+# path = ".data/data_deer_wild_boar_yolo/data/train/labels"
+# duplicates = find_duplicates_with_common_part(path)
+# print("Duplikate")
+# for element in duplicates:
+#     print(element)
+# print(len(duplicates))

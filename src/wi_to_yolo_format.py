@@ -47,7 +47,7 @@ def split_images(
                 shutil.copy(source_file, destination_file)
 
             except FileNotFoundError as e:
-                print(e, dateiname)
+                print(f"{e}\n{dateiname}")
             zaehler += 1
         else:
             source_file = os.path.join(image_folder, dateiname)
@@ -157,20 +157,34 @@ def move_files(src_dir, dest_dir, file_extension, percentage):
             shutil.move(os.path.join(src_dir, file), os.path.join(dest_dir, file))
             moved_files.append(file)
         else:
+            os.remove(os.path.join(dest_dir, file))
             duplicates.append(file)
-
+    print(f"\nBilder-Duplikate: {duplicates}")
+    print(f"Anzahl der Duplikate: {len(duplicates)}")
     return moved_files
 
 
 def move_text_files(src_dir, dest_dir, file_names):
     os.makedirs(dest_dir, exist_ok=True)
+    duplicates = []
+    duplicates_output = []
 
     for file_name in file_names:
         text_file = os.path.splitext(file_name)[0] + ".txt"
         if os.path.exists(os.path.join(src_dir, text_file)):
-            shutil.move(
-                os.path.join(src_dir, text_file), os.path.join(dest_dir, text_file)
-            )
+            if not os.path.exists(os.path.join(dest_dir, text_file)):
+                shutil.move(
+                    os.path.join(src_dir, text_file), os.path.join(dest_dir, text_file)
+                )
+    duplicates = [f for f in os.listdir(src_dir)]
+    for element in duplicates:
+        if os.path.exists(os.path.join(src_dir, element)) and os.path.exists(
+            os.path.join(dest_dir, element)
+        ):
+            os.remove(os.path.join(dest_dir, element))
+            duplicates_output.append(element)
+    print(f"\nLabel-Duplikate: {duplicates_output}")
+    print(f"Anzahl der Duplikate: {len(duplicates_output)}")
 
 
 def shuffle_files(directory):
@@ -218,11 +232,15 @@ if __name__ == "__main__":
     """Bilder ohne Label und Duplikate löschen."""
 
     # PARAMETER EINSTELLEN
-    image_folder = ".data/not_used/wi_fox/images"
+    image_folder = ".data/not_used/wi_deer/images"
     csv_file = ".contrib/images_2004096.csv"
-    destination_folder_w_label = ".data/not_used/wi_fox/images_w_label"
-    destination_folder_wo_label = ".data/not_used/wi_fox/images_wo_label"
-    animal = ("Red Fox",)  # Name des Tiers in der Spalte "common_name"
+    destination_folder_w_label = ".data/not_used/wi_deer/images_w_label"
+    destination_folder_wo_label = ".data/not_used/wi_deer/images_wo_label"
+    animal = (
+        "European Roe Deer",
+        "Common Fallow Deer",
+        "Mule Deer",
+    )  # Name des Tiers in der Spalte "common_name"
 
     split_images(
         image_folder,
@@ -235,8 +253,8 @@ if __name__ == "__main__":
     """Label umformatieren."""
 
     # PARAMETER EINSTELLEN
-    image_folder = ".data/not_used/wi_fox/images_w_label"
-    output_folder = ".data/not_used/wi_fox/labels"
+    image_folder = ".data/not_used/wi_deer/images_w_label"
+    output_folder = ".data/not_used/wi_deer/labels"
     class_id = 2  # id in data.yml für Klasse
 
     convert_to_yolo_format(csv_file, output_folder, image_folder, animal, class_id)
@@ -249,8 +267,8 @@ if __name__ == "__main__":
     # PARAMETER EINSTELLEN
     Ordnernamen = ["validation", "test", "train"]
     for Ordnername in Ordnernamen:
-        src_image_dir = ".data/not_used/wi_fox/images_w_label"
-        src_text_dir = ".data/not_used/wi_fox/labels"
+        src_image_dir = ".data/not_used/wi_deer/images_w_label"
+        src_text_dir = ".data/not_used/wi_deer/labels"
 
         if Ordnername == "validation":
             dest_image_dir = ".data/data_4animals/validation/images"
@@ -287,6 +305,10 @@ if __name__ == "__main__":
             rename_files_in_directory(".data/data_4animals/train/images")
             rename_files_in_directory(".data/data_4animals/train/labels")
 
-        print(f"{Ordnername} wurde erfolgreich verschoben und neu angeordnet.")
+        print(
+            f"{Ordnername} wurde erfolgreich verschoben, zufällig angeordnet und die Benennung korrigiert."
+        )
 
-    print("Dateien wurden erfolgreich verschoben und neu angeordnet.")
+    print(
+        f"\nAlle Dateien wurde erfolgreich verschoben, zufällig angeordnet und die Benennung korrigiert."
+    )
