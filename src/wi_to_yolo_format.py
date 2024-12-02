@@ -1,4 +1,3 @@
-import csv
 import json
 import os
 import random
@@ -7,6 +6,60 @@ import re
 import pandas as pd
 from tqdm import tqdm
 import numpy as np
+import time
+
+
+def split_images(
+    image_folder,
+    csv_file,
+    destination_folder_w_label,
+    destination_folder_wo_label,
+    animal,
+):
+    """Trennt Bilder ohne Label von Bildern mit Label.
+
+    Merke: Implementierung macht keinen Sinn, wenn Bilder ohne BB hier nicht mit gelöscht werden.
+    Falls das weiterhin so bleibt, sollte das shuttil.copy und die Verzweigung aufgelöst werden,
+    und Bilder ohne Label gelöscht werden.
+    """
+
+    zaehler = 0
+    os.makedirs(destination_folder_w_label, exist_ok=True)
+
+    # Label lesen + Duplikate löschen
+    df = pd.read_csv(csv_file)
+    df_animal = df.loc[df["common_name"].isin(animal)]
+    print(df.shape)
+    # Doppelte Vorkommen sind evtl. 1x falsch klassifiziert. Löschen sichert Qualität des Datensatzes.
+    wo_duplicates = df_animal["location"].drop_duplicates(keep=False)
+    col_location = wo_duplicates.tolist()
+    print(len(col_location))
+
+    image_names = set(os.listdir(image_folder))
+
+    for name in tqdm(col_location):
+        muster = r"[^/]+$"
+        dateiname = re.search(muster, name).group()
+        if dateiname in image_names:
+            source_file = os.path.join(image_folder, dateiname)
+            destination_file = os.path.join(destination_folder_w_label, dateiname)
+            try:
+                shutil.copy(source_file, destination_file)
+
+            except FileNotFoundError as e:
+                print(e, dateiname)
+            zaehler += 1
+        else:
+            source_file = os.path.join(image_folder, dateiname)
+            destination_file = os.path.join(destination_folder_wo_label, dateiname)
+            try:
+                shutil.copy(source_file, destination_file)
+            except FileNotFoundError as e:
+                print(e, dateiname)
+                print("Bild nicht vorhanden.")
+    print(
+        f"Anzahl der Bilder in der CSV: {zaehler} (Bilder ohne label, Label ohne Bilder und Duplikate gelöscht.)"
+    )
 
 
 def convert_to_json(data_str):
@@ -98,9 +151,13 @@ def move_files(src_dir, dest_dir, file_extension, percentage):
 
     # Dateien verschieben und ihre Namen speichern
     moved_files = []
+    duplicates = []
     for file in files_to_move:
-        shutil.move(os.path.join(src_dir, file), os.path.join(dest_dir, file))
-        moved_files.append(file)
+        if not os.path.exists(os.path.join(dest_dir, file)):
+            shutil.move(os.path.join(src_dir, file), os.path.join(dest_dir, file))
+            moved_files.append(file)
+        else:
+            duplicates.append(file)
 
     return moved_files
 
@@ -142,63 +199,94 @@ def rename_files_in_directory(directory):
         new_file_path = os.path.join(directory, new_name)
 
         # Datei umbenennen
-        os.rename(old_file_path, new_file_path)
+        try:
+            os.rename(old_file_path, new_file_path)
+        except PermissionError:
+            print(f"PermissionError: {file} wird von einem anderen Prozess verwendet.")
+            time.sleep(1)  # Warte eine Sekunde und versuche es erneut
+            os.rename(old_file_path, new_file_path)
 
 
-"""Label umformatieren."""
-# # Pfade
-# image_folder = ".data/not_used/wi_wild_boar/images_w_label"
-# csv_file = ".contrib/images_2004096.csv"
-# output_folder = ".data/not_used/wi_wild_boar/labels"
-# animal = ("Wild Boar",)  # Name des Tiers in der Spalte "common_name"
-# class_id = 1  # id in data.yml für Klasse
-# convert_to_yolo_format(csv_file, output_folder, image_folder, animal, class_id)
+if __name__ == "__main__":
+    """
+    Anleitung:
+    1. Parameter einstellen unter 'PARAMETER EINSTELLEN'.
+    2. Pfade in Vorschleife rename() anpassen.
+    3. GO!
+    """
 
-# print(
-#     f"Die Bounding Boxen wurden erfolgreich in das YOLO-Format konvertiert und im Ordner {output_folder} gespeichert."
-# )
+    """Bilder ohne Label und Duplikate löschen."""
 
-"""Files verschieben und neu anordnen."""
-# Verzeichnisse für Bilder
-# Ordnernamen = ["validation", "test", "train"]
-# for Ordnername in Ordnernamen:
-#     src_image_dir = ".data/not_used/wi_wild_boar/images_w_label"
-#     src_text_dir = ".data/not_used/wi_wild_boar/labels"
+    # PARAMETER EINSTELLEN
+    image_folder = ".data/not_used/wi_fox/images"
+    csv_file = ".contrib/images_2004096.csv"
+    destination_folder_w_label = ".data/not_used/wi_fox/images_w_label"
+    destination_folder_wo_label = ".data/not_used/wi_fox/images_wo_label"
+    animal = ("Red Fox",)  # Name des Tiers in der Spalte "common_name"
 
-#     if Ordnername == "validation":
-#         dest_image_dir = ".data/data_deer_wild_boar_yolo/validation/images"
-#         dest_text_dir = ".data/data_deer_wild_boar_yolo/validation/labels"
-#         size_of_data_part = 0.05
-#     elif Ordnername == "test":
-#         dest_image_dir = ".data/data_deer_wild_boar_yolo/test/images"
-#         dest_text_dir = ".data/data_deer_wild_boar_yolo/test/labels"
-#         size_of_data_part = 0.15
-#     elif Ordnername == "train":
-#         dest_image_dir = ".data/data_deer_wild_boar_yolo/train/images"
-#         dest_text_dir = ".data/data_deer_wild_boar_yolo/train/labels"
-#         size_of_data_part = 1
-#     else:
-#         print("Falsche Eingabe des ORDNERNAMENS.")
+    split_images(
+        image_folder,
+        csv_file,
+        destination_folder_w_label,
+        destination_folder_wo_label,
+        animal,
+    )
 
-#     # Bilder in train, test und validation unterteilen
-#     moved_images = move_files(src_image_dir, dest_image_dir, ".JPG", size_of_data_part)
+    """Label umformatieren."""
 
-#     # Entsprechende Textdateien verschieben
-#     move_text_files(src_text_dir, dest_text_dir, moved_images)
+    # PARAMETER EINSTELLEN
+    image_folder = ".data/not_used/wi_fox/images_w_label"
+    output_folder = ".data/not_used/wi_fox/labels"
+    class_id = 2  # id in data.yml für Klasse
 
-#     # Dateien in beiden Zielverzeichnissen zufällig neu anordnen
-#     shuffle_files(dest_image_dir)
-#     shuffle_files(dest_text_dir)
+    convert_to_yolo_format(csv_file, output_folder, image_folder, animal, class_id)
+    print(
+        f"Die Bounding Boxen wurden erfolgreich in das YOLO-Format konvertiert und im Ordner {output_folder} gespeichert."
+    )
 
-#     if Ordnername == "train":
-#         rename_files_in_directory(".data/data_deer_wild_boar_yolo/validation/images")
-# rename_files_in_directory(".data/data_deer_wild_boar_yolo/validation/labels")
-# rename_files_in_directory(".data/data_deer_wild_boar_yolo/test/images")
-# rename_files_in_directory(".data/data_deer_wild_boar_yolo/test/labels")
-# rename_files_in_directory(".data/data_deer_wild_boar_yolo/train/images")
-# rename_files_in_directory(".data/data_deer_wild_boar_yolo/train/labels")
+    """Files verschieben und neu anordnen."""
 
+    # PARAMETER EINSTELLEN
+    Ordnernamen = ["validation", "test", "train"]
+    for Ordnername in Ordnernamen:
+        src_image_dir = ".data/not_used/wi_fox/images_w_label"
+        src_text_dir = ".data/not_used/wi_fox/labels"
 
-#     print(f"{Ordnername} wurde erfolgreich verschoben und neu angeordnet.")
+        if Ordnername == "validation":
+            dest_image_dir = ".data/data_4animals/validation/images"
+            dest_text_dir = ".data/data_4animals/validation/labels"
+            size_of_data_part = 0.05
+        elif Ordnername == "test":
+            dest_image_dir = ".data/data_4animals/test/images"
+            dest_text_dir = ".data/data_4animals/test/labels"
+            size_of_data_part = 0.15
+        elif Ordnername == "train":
+            dest_image_dir = ".data/data_4animals/train/images"
+            dest_text_dir = ".data/data_4animals/train/labels"
+            size_of_data_part = 1
+        else:
+            print("Falsche Eingabe des ORDNERNAMENS.")
 
-# print("Dateien wurden erfolgreich verschoben und neu angeordnet.")
+        # Bilder in train, test und validation unterteilen
+        moved_images = move_files(
+            src_image_dir, dest_image_dir, ".JPG", size_of_data_part
+        )
+
+        # Entsprechende Textdateien verschieben
+        move_text_files(src_text_dir, dest_text_dir, moved_images)
+
+        # Dateien in beiden Zielverzeichnissen zufällig neu anordnen
+        shuffle_files(dest_image_dir)
+        shuffle_files(dest_text_dir)
+
+        if Ordnername == "train":
+            rename_files_in_directory(".data/data_4animals/validation/images")
+            rename_files_in_directory(".data/data_4animals/validation/labels")
+            rename_files_in_directory(".data/data_4animals/test/images")
+            rename_files_in_directory(".data/data_4animals/test/labels")
+            rename_files_in_directory(".data/data_4animals/train/images")
+            rename_files_in_directory(".data/data_4animals/train/labels")
+
+        print(f"{Ordnername} wurde erfolgreich verschoben und neu angeordnet.")
+
+    print("Dateien wurden erfolgreich verschoben und neu angeordnet.")
