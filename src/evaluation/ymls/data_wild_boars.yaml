@@ -7,3 +7,5 @@ val: .data/evaluation/img/weitere Evaluation/wild_boar
 names:
   0: deer
   1: wild_boar
+  2: fox
+  3: badger

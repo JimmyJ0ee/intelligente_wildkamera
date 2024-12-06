@@ -3,8 +3,9 @@ train: ./../.data/data_deer_yolov8/train/
 test: ./../.data/data_deer_yolov8/test/
 val: .data/evaluation/img/weitere Evaluation/robustness
 
-
 # Classes
 names:
   0: deer
   1: wild_boar
+  2: fox
+  3: badger
