@@ -232,15 +232,13 @@ if __name__ == "__main__":
     """Bilder ohne Label und Duplikate löschen."""
 
     # PARAMETER EINSTELLEN
-    image_folder = ".data/not_used/wi_deer/images"
+    image_folder = ".data/not_used/wi_badger/images"
     csv_file = ".contrib/images_2004096.csv"
-    destination_folder_w_label = ".data/not_used/wi_deer/images_w_label"
-    destination_folder_wo_label = ".data/not_used/wi_deer/images_wo_label"
+    destination_folder_w_label = ".data/not_used/wi_badger/images_w_label"
+    destination_folder_wo_label = ".data/not_used/wi_badger/images_wo_label"
     animal = (
-        "European Roe Deer",
-        "Common Fallow Deer",
-        "Mule Deer",
-    )  # Name des Tiers in der Spalte "common_name"
+        "Eurasian Badger",
+    )  # Name des Tiers in der Spalte "common_name" ACHTUNG: Muss Tupel sein.
 
     split_images(
         image_folder,
@@ -253,9 +251,9 @@ if __name__ == "__main__":
     """Label umformatieren."""
 
     # PARAMETER EINSTELLEN
-    image_folder = ".data/not_used/wi_deer/images_w_label"
-    output_folder = ".data/not_used/wi_deer/labels"
-    class_id = 2  # id in data.yml für Klasse
+    image_folder = ".data/not_used/wi_badger/images_w_label"
+    output_folder = ".data/not_used/wi_badger/labels"
+    class_id = 3  # id in data.yml für Klasse
 
     convert_to_yolo_format(csv_file, output_folder, image_folder, animal, class_id)
     print(
@@ -267,8 +265,8 @@ if __name__ == "__main__":
     # PARAMETER EINSTELLEN
     Ordnernamen = ["validation", "test", "train"]
     for Ordnername in Ordnernamen:
-        src_image_dir = ".data/not_used/wi_deer/images_w_label"
-        src_text_dir = ".data/not_used/wi_deer/labels"
+        src_image_dir = ".data/not_used/wi_badger/images_w_label"
+        src_text_dir = ".data/not_used/wi_badger/labels"
 
         if Ordnername == "validation":
             dest_image_dir = ".data/data_4animals/validation/images"

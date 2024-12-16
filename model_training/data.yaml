@@ -1,9 +1,0 @@
-path:  C:/Users/Z0127829/OneDrive - ZF Friedrichshafen AG/Desktop/Arbeit/Studienarbeit/intelligente_wildkamera/model_training # root dir
-train: ./../.data/data_deer_yolov8/train/
-test: ./../.data/data_deer_yolov8/test/
-val: ./../.data/data_deer_yolov8/validation/
-
-# Classes
-names:
-  0: deer
-  1: wild_boar
