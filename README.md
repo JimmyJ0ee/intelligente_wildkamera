@@ -1,3 +1,13 @@
+# Data
+
+Training-, Test- and Validationdata at kaggle.com: Ask Owner for access.
+
+* [data_4animals](https://www.kaggle.com/datasets/nicolasequit/data-4animals)
+* [dataset_wildboar_and_deer](https://www.kaggle.com/datasets/nicolasequit/dataset-wildboar-and-deer)
+* [test_data_real](https://www.kaggle.com/datasets/nicolasequit/test-data-real)
+
+Evaluationdata: Ask Owner for help.
+
 # Intelligente Wildkamera
 
 ### Installation
